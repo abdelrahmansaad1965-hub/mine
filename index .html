@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Sarsor ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&family=Caveat:wght@600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --rose-light: #fff0f3; --rose-accent: #ff8fab; --rose-glow: #ffb3c6; --text-main: #4a3e41; --text-muted: #8c7a7e; --card-bg: rgba(255, 255, 255, 0.75); --border: rgba(255, 143, 171, 0.25); --radius-lg: 24px; --radius-md: 16px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, rgba(255, 240, 243, 0.85), rgba(255, 255, 255, 0.9)), url('https://picsum.photos/1920/1080?romantic=1'); background-size: cover; background-position: center; background-attachment: fixed; color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; padding: 20px; position: relative; }
+        #password-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255, 240, 243, 0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); display: flex; justify-content: center; align-items: center; z-index: 2000; transition: all 0.6s ease; }
+        .modal-content { background: var(--card-bg); border: 1px solid var(--border); padding: 40px 30px; border-radius: var(--radius-lg); text-align: center; box-shadow: 0 30px 70px rgba(255, 143, 171, 0.15); max-width: 400px; width: 90%; }
+        .modal-content h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 12px; }
+        .modal-content p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; }
+        .copy-box { display: flex; background: rgba(255, 255, 255, 0.8); padding: 14px 20px; border-radius: var(--radius-md); align-items: center; justify-content: space-between; margin: 20px 0; border: 1px solid var(--border); }
+        .copy-btn, #unlock-btn { background: linear-gradient(135deg, var(--rose-accent), var(--rose-glow)); color: white; border: none; padding: 10px 22px; border-radius: 12px; cursor: pointer; font-weight: 500; transition: all 0.3s ease; }
+        .copy-btn:hover, #unlock-btn:hover { transform: translateY(-2px); opacity: 0.95; }
+        #lock-screen { position: fixed; top:0; left:0; width:100%; height:100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; transition: all 0.8s ease; padding: 20px; }
+        #lock-screen h1 { font-family: 'Playfair Display', serif; font-size: 2.6rem; margin-bottom: 10px; }
+        #lock-screen p { color: var(--text-muted); margin-bottom: 30px; }
+        .input-group { background: rgba(255, 255, 255, 0.7); padding: 8px; border-radius: var(--radius-md); display: flex; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--border); max-width: 360px; width: 100%; }
+        #password-input { background: transparent; border: none; outline: none; padding: 12px; font-size: 1.1rem; width: 65%; color: var(--text-main); text-align: center; font-weight: 600; letter-spacing: 2px; }
+        #main-wrapper { position: relative; width: 100%; max-width: 1200px; height: 85vh; display: none; justify-content: center; align-items: center; z-index: 10; }
+        #main-content { opacity: 0; transform: scale(0.95); transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 520px; width: 100%; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.6); padding: 40px 30px; border-radius: 32px; text-align: center; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: 0 40px 90px rgba(255, 143, 171, 0.15); z-index: 20; position: relative; }
+        #main-content h2 { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-style: italic; background: linear-gradient(to right, #ff758f, #ffb3c6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
+        .letter-container { max-height: 250px; overflow-y: auto; text-align: left; padding-right: 15px; margin-bottom: 10px; scrollbar-width: thin; scrollbar-color: var(--rose-accent) transparent; }
+        .letter-container::-webkit-scrollbar { width: 5px; }
+        .letter-container::-webkit-scrollbar-thumb { background: var(--rose-accent); border-radius: 10px; }
+        .letter-container p { font-size: 1.05rem; line-height: 1.8; color: var(--text-main); white-space: pre-line; font-weight: 400; direction: ltr; }
+        .photo-container-scattered { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 15; }
+        .photo-item { position: absolute; background: white; padding: 10px 10px 35px 10px; border-radius: 8px; box-shadow: 0 10px 25px rgba(255, 143, 171, 0.12); border: 1px solid rgba(0,0,0,0.03); pointer-events: auto; cursor: pointer; transform-origin: top center; transition: all 0.4s ease; }
+        .photo-item::before { content: ''; position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 14px; height: 14px; background: radial-gradient(circle, #fff 20%, var(--rose-accent) 80%); border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 5; }
+        .photo-item::after { position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; font-family: 'Caveat', cursive; font-size: 1.3rem; color: var(--text-muted); font-weight: bold; }
+        .photo-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+        .p1 { left: 8%; top: 12%; width: 160px; height: 190px; transform: rotate(-6deg); } .p1::after { content: 'Memories ❤️'; }
+        .p2 { right: 8%; top: 15%; width: 170px; height: 200px; transform: rotate(5deg); } .p2::after { content: 'Smile ✨'; }
+        .p3 { left: 10%; bottom: 10%; width: 165px; height: 195px; transform: rotate(4deg); } .p3::after { content: 'Laugh 🌸'; }
+        .p4 { right: 9%; bottom: 8%; width: 160px; height: 190px; transform: rotate(-5deg); } .p4::after { content: 'Forever 💫'; }
+        .photo-item:hover { z-index: 50; transform: scale(1.1) rotate(0deg) translateY(5px); animation: swing 0.5s ease-in-out infinite alternate; }
+        @keyframes swing { 0% { transform: scale(1.1) rotate(-3deg); } 100% { transform: scale(1.1) rotate(3deg); } }
+        #music-btn { position: fixed; bottom: 30px; right: 30px; background: rgba(255, 255, 255, 0.8); border: 1px solid var(--border); backdrop-filter: blur(10px); color: var(--rose-accent); width: 50px; height: 50px; border-radius: 50%; cursor: pointer; z-index: 1100; display: none; line-height: 50px; text-align: center; font-size: 1.2rem; }
+        .heart { position: absolute; color: var(--rose-accent); opacity: 0; animation: fall linear forwards; z-index: 1; pointer-events: none; }
+        @keyframes fall { 0% { transform: translateY(-20px) scale(0.6) rotate(0deg); opacity: 0; } 15% { opacity: 0.8; } 90% { opacity: 0.5; } 100% { transform: translateY(100vh) scale(1.3) rotate(360deg); opacity: 0; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-6px); } 50% { transform: translateX(6px); } }
+        @media (max-width: 850px) { body { overflow-y: auto; height: auto; display: block; } #main-wrapper { display: flex; flex-direction: column; height: auto; gap: 30px; } #main-content { position: static; margin: 0 auto; } .photo-container-scattered { position: static; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; height: auto; } .photo-item { position: static; transform: none !important; width: 145px; height: 175px; } .photo-item:hover { animation: none; transform: scale(1.05) !important; } }
+    </style>
+</head>
+<body>
+    <audio id="bg-music" src="Ravyn_Lenae_-_Love_Me_Not.mp3" preload="auto" loop></audio>
+    <button id="music-btn" onclick="toggleMusic()">🎵</button>
+    <div id="password-modal">
+        <div class="modal-content">
+            <h3>Secret key for Sarsor ❤️</h3>
+            <p>Copy the date below to reveal your special birthday surprise.</p>
+            <div class="copy-box">
+                <span id="modal-pass" style="color:var(--rose-accent); font-weight:600; letter-spacing:2px;">11/11/2009</span>
+                <button class="copy-btn" id="copy-btn" onclick="copyPassword()">Copy</button>
+            </div>
+        </div>
+    </div>
+    <div id="lock-screen">
+        <h1>Hello Sarsor ❤️</h1>
+        <p>Enter your birth date to unlock a little something...</p>
+        <div class="input-group" id="input-box">
+            <input type="text" id="password-input" placeholder="DD/MM/YYYY" maxlength="10">
+            <button id="unlock-btn" onclick="checkPassword()">Open</button>
+        </div>
+        <p id="error-msg" style="color:var(--rose-accent); margin-top:15px; visibility:hidden;">Oops! Wrong date, try again. ✨</p>
+    </div>
+    <div id="main-wrapper">
+        <div id="main-content">
+            <h2>Happy Birthday!</h2>
+            <div class="letter-container">
+                <p id="love-letter">
+                    Today is an incredibly beautiful day because it’s the day you were born, Sarsor ❤️.
+                    I wanted to create something truly unique, minimal, and aesthetic just for you—a little reminder of how incredibly much your presence in my life means to me. You bring such a warm, lovely, and peaceful energy wherever you go.
+                    Here you can add your extremely long message that you are planning to write! This glassmorphic container is perfectly designed with a custom smooth rose scrollbar, allowing your long paragraph to scroll beautifully without taking over the screen or blocking the floating polaroid memory cards scattered around it. 
+                    Everything is safe, aligned, and optimized to look incredibly professional, clean, and pleasing to the eye. Have the happiest birthday ever! ✨🌸💫💌
+                </p>
+            </div>
+            <div style="font-size: 2rem; opacity: 0.7; margin-top: 15px;">✨💌💫</div>
+        </div>
+        <div class="photo-container-scattered">
+            <div class="photo-item p1"><img src="https://picsum.photos/400/500?random=1" alt="1"></div>
+            <div class="photo-item p2"><img src="https://picsum.photos/400/500?random=2" alt="2"></div>
+            <div class="photo-item p3"><img src="https://picsum.photos/400/500?random=3" alt="3"></div>
+            <div class="photo-item p4"><img src="https://picsum.photos/400/500?random=4" alt="4"></div>
+        </div>
+    </div>
+    <script>
+        const passIn = document.getElementById("password-input"), music = document.getElementById("bg-music"), musicBtn = document.getElementById("music-btn");
+        function copyPassword() {
+            navigator.clipboard.writeText("11/11/2009").then(() => {
+                document.getElementById("copy-btn").innerText = "Copied! ✓"; passIn.value = "11/11/2009";
+                setTimeout(() => { document.getElementById("password-modal").style.opacity = "0"; setTimeout(() => { document.getElementById("password-modal").style.display = "none"; }, 600); }, 400);
+            }).catch(() => {
+                document.getElementById("copy-btn").innerText = "Copied! ✓"; passIn.value = "11/11/2009";
+                setTimeout(() => { document.getElementById("password-modal").style.opacity = "0"; setTimeout(() => { document.getElementById("password-modal").style.display = "none"; }, 600); }, 400);
+            });
+        }
+        passIn.addEventListener("input", (e) => {
+            let v = e.target.value.replace(/\D/g, "");
+            if (v.length > 2 && v.length <= 4) v = v.slice(0,2)+"/"+v.slice(2);
+            else if (v.length > 4) v = v.slice(0,2)+"/"+v.slice(2,4)+"/"+v.slice(4,8);
+            e.target.value = v;
+        });
+        passIn.addEventListener("keypress", (e) => { if (e.key === "Enter") checkPassword(); });
+        function checkPassword() {
+            if (passIn.value.trim() === "11/11/2009") {
+                music.play().catch(o => {}); musicBtn.style.display = "block";
+                document.getElementById("lock-screen").style.opacity = "0";
+                setTimeout(() => { document.getElementById("lock-screen").style.display = "none"; }, 800);
+                document.getElementById("password-modal").style.display = "none";
+                document.getElementById("main-wrapper").style.display = "flex";
+                setTimeout(() => { 
+                    document.getElementById("main-content").style.opacity = "1"; 
+                    document.getElementById("main-content").style.transform = "scale(1)"; 
+                    if(typeof confetti === 'function') triggerConfetti(); 
+                    setInterval(createHeart, 300); 
+                }, 50);
+            } else {
+                document.getElementById("error-msg").style.visibility = "visible";
+                document.getElementById("input-box").style.animation = "shake 0.2s ease-in-out 2";
+                setTimeout(() => { document.getElementById("input-box").style.animation = ""; }, 400);
+            }
+        }
+        function triggerConfetti() { confetti({ particleCount: 160, spread: 85, origin: { y: 0.6 } }); }
+        function createHeart() {
+            const heart = document.createElement("div"); heart.classList.add("heart");
+            const hearts = ["❤️", "💖", "✨", "🌸"]; heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = Math.random() * 100 + "vw"; heart.style.animationDuration = Math.random() * 3 + 2 + "s";
+            heart.style.fontSize = Math.random() * 15 + 16 + "px"; document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+        function toggleMusic() { if (music.paused) { music.play(); musicBtn.innerText = "🎵"; } else { music.pause(); musicBtn.innerText = "🔇"; } }
+    </script>
+</body>
+</html>
